@@ -3,7 +3,7 @@ import mmcv
 import numpy as np
 
 from mmpose_utils import LoadImage
-from mmcv.runner import load_checkpoint
+from mmengine.runner import load_checkpoint
 from mmpose.apis import get_track_id
 from mmpose.models import build_posenet
 from mmpose.datasets.pipelines import Compose

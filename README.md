@@ -35,6 +35,32 @@ These instructions are for Windows 10. The pipeline also runs on Ubuntu. Minimum
 1) Authenticate and save an environment variable by running `Examples/createAuthenticationEnvFile.py`. You can proceed without this, but you will be required to log in every time you run a script.
 2) Copy your session identifier from [app.opencap.ai](https://app.opencap.ai) into `Examples/reprocessSession.py`, choose your pose estimation settings, and run it. The session id is the 36-character string at the end of the session url. For example, the session identifier for https://app.opencap.ai/session/7272a71a-e70a-4794-a253-39e11cb7542c is `'7272a71a-e70a-4794-a253-39e11cb7542c'`. If you reprocess a session that you recorded, results will be written back to the database, and if you choose, they will be saved locally in `./Data/<session_id>`.
 3) To compute kinetics we recommend starting with `example_kinetics.py` in the [opencap-processing](https://github.com/stanfordnmbl/opencap-processing) repository. Data from many sessions can also be downloaded in batch using `batchDownload.py` in the opencap-processing repository or the `Examples/batchDownloadData.py` script in this repository.
+4) If you are using HRNet of mmpose, you need to install the following version:
+```bash
+openmim                   0.3.9 
+mmcv                      1.7.0                    
+mmcv-full                 1.7.0                    
+mmdet                     2.28.2                   
+mmengine                  0.10.7                   
+mmpose                    0.29.0
+torch                     1.13.1+cu117
+torchvision               0.14.1+cu117       
+```
+5) You also may need to download the detection and keypoints models from:
+```bash
+https://huggingface.co/spaces/fffiloni/mmpose-estimation/blob/dd314fcab24437b8d2847cda867fcd46036ec91f/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth
+https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w32_coco_wholebody_256x192_dark-469327ef_20200922.pth
+```
+#### Results on COCO-WholeBody v1.0 val with detector having human AP of 56.4 on COCO val2017 dataset
+
+| Arch  | Input Size | Body AP | Body AR | Foot AP | Foot AR | Face AP | Face AR  | Hand AP | Hand AR | Whole AP | Whole AR | ckpt | log |
+| :---- | :--------: | :-----: | :-----: | :-----: | :-----: | :-----: | :------: | :-----: | :-----: | :------: |:-------: |:------: | :------: |
+| [pose_hrnet_w32_dark](/configs/wholebody/darkpose/coco-wholebody/hrnet_w32_coco_wholebody_256x192_dark.py)  | 256x192 | 0.694 | 0.764 | 0.565 | 0.674 | 0.736 | 0.808 | 0.503 | 0.602 | 0.582 | 0.671 | [ckpt](https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w32_coco_wholebody_256x192_dark-469327ef_20200922.pth) | [log](https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w32_coco_wholebody_256x192_dark_20200922.log.json) |
+| [pose_hrnet_w48_dark+](/configs/wholebody/darkpose/coco-wholebody/hrnet_w48_coco_wholebody_384x288_dark_plus.py)  | 384x288 | 0.742 | 0.807 | 0.705 | 0.804 | 0.840 | 0.892 | 0.602 | 0.694 | 0.661 | 0.743 | [ckpt](https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w48_coco_wholebody_384x288_dark-f5726563_20200918.pth) | [log](https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w48_coco_wholebody_384x288_dark_20200918.log.json) |
+
+Note: `+` means the model is first pre-trained on original COCO dataset, and then fine-tuned on COCO-WholeBody dataset. We find this will lead to better performance.
+
+6) You may need to change model_ckpt_person and model_ckpt_pose paths in utilsDetector.py. 
 
 ### Reproducing results from the paper 
 1) Data used in the OpenCap publication are available on [SimTK](https://simtk.org/projects/opencap). This dataset includes raw data (e.g., videos, motion capture, ground reaction forces, electromyography), and processed data (e.g., scaled OpenSim models, inverse kinematics, inverse dynamics, and dynamic simulation results).
